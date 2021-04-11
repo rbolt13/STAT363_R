@@ -1,0 +1,133 @@
+---
+title: "In-class Exercises Week 1"
+author: "Your "
+output:
+ html_document:
+   theme: readable
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Set 1, Exercise 1
+
+Write a set of conditional(s) that satisfies the following requirements:
+
+* If `x` is greater than 3 and `y` is less than or equal to 3 then print "Hello world!"
+
+* Otherwise if `x` is greater than 3 print "!dlrow olleH"
+
+* If `x` is less than or equal to 3 then print "Something else ..."
+
+* Stop execution if x is odd and y is even and report an error, don't print any of the text strings above.
+
+Test out your code with
+
+1. `x=1` and `y=2`
+2. `x=1` and `y=3` 
+3. `x=3` and `y=3`
+
+**Note that because of the `stop` command, the `.Rmd` file will not knit when errors occur unless you set the chunk option `error=TRUE`**
+
+```{r Set1Exe1, error=TRUE}
+# write your code for problem set 1 exercise 1 here
+x <- 3
+y <- 3
+if ((x%%2) == 1 & (y%%2) == 0){
+  stop("Error Message.")
+}else{
+  if(x > 3){
+    if(y <= 3){
+      print("Hello World!")
+    }else{
+      print("!dlroW olleH")
+    }
+  }else{
+    print("Something else. . .")
+  }
+}
+```
+
+## Set 1, Exercise 2
+
+Write a set of conditional(s) in `R` to solve equations of the form $$a x^2 + b x + c=0,$$ which accounts for possible errors that might occurr in the calculation (you may use `if`, `else if`, `else`, `stop`, `stopifnot`)
+
+Test out your code with
+
+1. `a=1`, `b=0` and `c=1`
+2. `a=1`, `b=0` and `c=-1`
+3. `a=9`, `b=4` and `c=1`
+4. `a=0`, `b=3` and `c=3`
+4. `a=1`, `b=-4` and `c=4`
+
+
+**Again, because of the `stop` command the `.Rmd` file will not knit when errors occur unless you set the chunk option `error=TRUE`**
+
+```{r Set1Exe2, error=TRUE}
+# write your code for problem set 1 exercise 2 here
+a = 1
+b = 4
+c = 1
+
+testvar <- (b^2 - 4*a*c)
+roots <- NULL
+if (testvar<0){
+  stop("no real roots")
+}else{
+  if(a==0){
+    roots <- -c/b
+    cat("equation is linear (i.e., a = 0 )","\n")
+  }else{
+    roots <- (-b+sqrt(testvar)*c(-1,1))/(2*a)
+  }
+  cat("the solution is: x=", paste(unique(roots),sep="",collapse=" and "),"\n")
+}
+
+```
+
+# Set 2
+
+Below is a vector containing all prime numbers between 2 and 100:
+
+
+```{r}
+primes = c( 2,  3,  5,  7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 
+      43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97)
+```
+
+
+If you were given the vector 
+
+`x = c(3,4,12,19,23,51,61,63,78)`, 
+</div>
+write the R code necessary to print only the values of `x` that are *not* prime (without using subsetting or the `%in%` operator). 
+
+Your code should use *nested* loops to iterate through the vector of primes and `x`.
+
+
+```{r Set2, echo=T}
+# write your code for problem set 2 here
+
+primes = c(2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97)
+x = c(3, 4, 12, 19, 23, 51, 61, 63, 78)
+
+res <- c()
+j <- 1
+b <- x[1]
+
+for(a in primes){
+  if(j>length(x)){
+    break
+  }
+  while( (b<=a) & (j<= length(x)) ){
+    if(b!=a){
+      res <- c(res,b)
+    }
+    j <- j+1
+    b <- x[j]
+  }
+}
+res
+```
+

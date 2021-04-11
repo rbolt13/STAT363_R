@@ -1,0 +1,300 @@
+---
+title: "Week2_ElectricBoogaloo"
+subtitle: "Week 2 Notes"
+author: "Randi Bolt"
+output: 
+  html_document: 
+  theme: readable
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Atotmic Vectors can be constructed using concatenate c()
+```{r}
+c(1,2,3)
+c("Hello", "World")
+#nested concatenates
+c("a",c("b",c("c")))
+```
+
+## Testing types
+typeof(x) 
+mode(x) 
+```{r}
+typeof(TRUE)
+mode(TRUE)
+typeof("hello")
+mode("hello")
+typeof(1.33)
+mode(1.33)
+typeof(7)
+mode(7)
+typeof(7L)
+mode(7L)
+```
+
+## Type Coercion
+character <- double <- int <- boolean
+```{r}
+typeof(c(1,"Hello"))
+typeof(c(FALSE,3L))
+typeof(c(1.2, 3L))
+```
+
+## Operator Coercion
+```{r}
+3.1+3L
+log(TRUE)
+TRUE & 7 # true bc/ not 0
+FALSE | 5 #flase or false is true
+```
+
+## Explicit Coercion
+as. 
+```{r}
+as.logical(5.2)
+as.character(TRUE)
+as.integer(pi)
+as.numeric(FALSE)
+as.double("7.2")
+as.double("one")
+
+```
+
+## Missing Values 
+NA : used to represent missing values. By default NA is logical. 
+```{r}
+typeof(NA)
+typeof(c("a",NA))
+typeof(NA+1)
+typeof(NA_character_)
+typeof(NA_real_) #never see type appended
+typeof(NA_integer_)
+```
+
+## Stickiness of Missing Values
+```{r}
+1+NA
+1 / NA
+NA*5
+sqrt(NA)
+mean(c(1,2,3,NA))
+3^NA
+```
+
+## Conditionals and Missing values
+NA's can cause control flow issues
+```{r, error=TRUE}
+if(2!=NA){"Here"}
+if(all(c(1,2,NA,4) >= 1)){"There"}
+if(any(c(1,2,NA,4) >= 1)){"There"}
+```
+
+## Testing for missing valuse
+is.na
+```{r}
+is.na(NA)
+is.na(1)
+is.na(c(1,2,3,NA))
+any(is.na(c(1,2,3,NA)))
+all(is.na(c(1,2,3,NA)))
+```
+
+## Other special (double) values
+NaN - not a number, Inf - positive infinity, -Inf - negative infinity
+```{r}
+pi/0
+0/0
+1/0+1/0
+1/0-1/0
+NaN + NA
+```
+
+## Testing for inf and NaN
+```{r}
+is.finite(NA)
+is.finite(1/0+1/0)
+is.finite(1/0-1/0)
+is.nan(1/0-1/0)
+```
+
+## Coercion for Infinity and NaN
+```{r}
+as.integer(Inf)
+as.integer(NaN)
+as.logical(Inf)
+as.logical(-Inf)
+as.logical(NaN)
+as.character(Inf)
+as.character(NaN)
+```
+
+## Exercise Set 2 Proble 2
+
+```{r}
+paste("label ", 1:30 , sep= "", ",")
+paste("fn", 1:30, sep= "")
+```
+
+## Generic Vectors
+Lists : are generic 1 dimensional 
+```{r}
+list("A", c(TRUE,FALSE), (1:4)/2, function(x) x^2)
+```
+
+## Structure
+
+```{r}
+str(list("A", c(TRUE,FALSE), (1:4)/2, function(x) x^2))
+```
+
+## Recursive Lists
+```{r}
+str(list(1,list(2, list(3,4), 5)))
+```
+
+## List Coercion
+```{r}
+str(c(1, list(4, list(6,7))))
+unlist(c(1, list(4, list(6,7))))
+unlist(list(1, list(2, list(3, "Hello"))))
+```
+
+## Named Lists
+
+```{r}
+str(list(A=1, B = list(C = 2, D = 3)))
+list("knock knock" = "whos's there?")
+#names gives names of list in highes heirarchy
+list(ABC = 1, DEF = list(H=2, I=3))
+names(list(ABC = 1, DEF = list(H=2, I=3)))
+```
+
+# Exercise Set #2 Problem #3
+```{r}
+str(list(firstName = "John", 
+         lastName = "Smith", 
+         age = 25L, 
+         address = list(streetAddress = "31 3rd Street", 
+                        city = "New York", 
+                        state = "NY", 
+                        postalCode = 10021L), 
+         phoneNumber = list(type = "home", 
+                            number = "212 555 5555"), 
+                       list(type = "fax",
+                             number = "646 555 5555")))
+```
+
+## Objects with Attributes
+e.g. class, comment, dim, dimnames, names
+
+```{r}
+(x <- c(L=1, M=2, N=3))
+attr(x, "names") <- c("A", "B", "C")
+names(x)
+```
+
+## Attributes
+```{r}
+str(x)
+attributes(x)
+str(attributes(x))
+```
+
+## Factors
+* class = "factor"
+* levels = a character vector
+```{r}
+#highest degree a person's obtained 
+(x <- factor(c("BS", "MS", "PhD", "MS")))
+#int with levels attributes. Each level assigned a level
+#factor is a function. 
+str(x)
+#assign levels
+(x <- factor(c("BS", "MS", "PhD", "MS"), levels=c("PhD", "MS", "BS")))
+attributes(x)
+```
+
+## Exercise 2 Problem 4
+```{r}
+x <- c(2L, 4L, 1L, 1L, 1L, 1L, 2L, 1L, 2L, 4L, 4L, 3L, 3L, 3L )
+attributes(x) <- list(class="factor", 
+                      levels=c("Sunny",
+                              "Mostly Sunny",
+                              "Mostly Cloudy",
+                              "AM Showers"))
+str(x)
+x
+```
+
+## Matrices
+Vectors with dimensional attribute (2D version of atomic vectors). Can only take objects of the same type. 
+```{r}
+(m<- matrix(c(1,2,3,4), ncol=2, nrow=2))
+```
+
+```{r}
+attributes(m)
+```
+
+## Column major ordering
+```{r}
+#takes values by colomn
+colmaj <- matrix(c(1,2,3,4), ncol=2, nrow=2)
+colmaj
+c(colmaj)
+#takes values by row
+rowmaj <- matrix(c(1,2,3,4), ncol=2, nrow=2, byrow=TRUE)
+rowmaj
+c(rowmaj)
+```
+
+## Data Frames
+* R handles heterogeneous tabular data using data frames
+* A data frame in R is a list of equal length vectors
+* Data frames are generated when reading a file into R, but can also be built from scratch
+```{r}
+df <- data.frame(x=1:3, y=c("a", "b", "c"))
+str(df)
+typeof(df)
+attributes(df)
+```
+
+## Cooking up your own data.frame
+```{r}
+df2 <- list(x=1:3, y =factor(c("a","b","c")))
+attr(df2,"class") <- "data.frame"
+df2
+str(df2)
+attributes(df2)
+class(df2)
+# if attributes aren't there then its unsure where to put things
+attr(df2, "row.names") <- 1:3
+df2
+str(df2)
+attributes(df2)
+```
+
+## In class example
+```{r}
+df3 <- list(x = 1:4, y = c("a", "b", "c", "d"))
+attr(df3,"class") <- "data.frame"
+attr(df3,"row.names") = 1:4
+df3
+str(df3)
+```
+
+## Characters vs Factors
+```{r}
+df <- data.frame(x=1:3, y=c("a", "b","c"),stringsAsFactors = FALSE)
+str(df)
+```
+
+## Length Coercion 
+If the longer length is a multiple of a the shorter then this coercion will occur without any warnings / errors. 
+```{r}
+x <- 1:3
+y <- 2:3
+x+y
+```
+
