@@ -298,3 +298,36 @@ y <- 2:3
 x+y
 ```
 
+## Length Coercion 
+```{r}
+data.frame(x=1:3, y=c("a"))
+# bad : data.frame(x=1:3, y=c("a","b"))
+```
+
+Growing data frames
+Add rows or columns using rbind and cbind
+```{r}
+df <- data.frame(x=1:3, y=c("a","b","c"))
+df
+rbind(df, c(TRUE,FALSE))
+df
+#true c. to 1, and false c. to character "FALSE"
+#have to be careful, if you convert into a character and try to do math it wont work 
+cbind(df,z=TRUE)
+df
+```
+
+## Growing data frames
+```{r}
+df1 <- data.frame(x = 1:3, y = c("a", "b", "c"))
+df2 <- data.frame(m = 3:1, n = c(TRUE, TRUE, FALSE))
+cbind(df1,df2)
+```
+## What will happen? 
+* remember columns need to have the same name attribute 
+```{r}
+df1 <- data.frame(x = 1:3, y = c("a","b","c"))
+df2 <- data.frame(m=3, n= TRUE)
+cbind(df1,df2)
+```
+

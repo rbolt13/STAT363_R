@@ -1,0 +1,33 @@
+---
+title: "playin around"
+author: "Randi Bolt"
+date: "4/22/2021"
+output: html_document
+---
+
+```{r}
+data(swiss)
+```
+
+## In-class exercise 2 {.smaller}
+
+
+- Extend your exploration of `swiss` by using 2 or three of the figure types discussed after `plot`
+
+- Make a figure with two panels (1 row by two columns) using `mfrow`
+
+- Make a figure with 3 different plots using `layout`
+
+```{r}
+par(mfrow=c(1,2))
+plot(x = swiss$Fertility, y = swiss$Infant.Mortality,xlab = "", ylab = "", main = "",
+     type = "p", pch = 16, col = "firebrick") 
+plot(x = swiss$Fertility, y = swiss$Infant.Mortality,xlab = "", ylab = "", main = "",
+     type = "p", pch = 16, col = "firebrick") 
+abline(reg=lm(Infant.Mortality~Fertility,data=swiss),col="forestgreen",lwd=2)
+plot(x = swiss$Fertility, y = swiss$Infant.Mortality,xlab = "", ylab = "", main = "",
+     type = "p", pch = 16, col = "firebrick") 
+lines(lowess(swiss),col="cornflowerblue",lwd=2)
+mosaicplot(~ Fertility + Infant.Mortality, data = swiss, main="",color = TRUE)
+```
+

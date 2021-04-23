@@ -1,0 +1,335 @@
+---
+title: "week4_dontknockmydoor"
+author: "Randi Bolt"
+date: "4/20/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Plan for today
+ * Visualization in base R 
+ 
+ ## Data Visulaization in R before ggplot2
+ * R is a software for statistics it comes with extensive plotting capabilities
+ * MANY plotting functions are installed in the graphics package, whcih ships with base R
+ * Look into the help files for the functions in this package using 
+```{r}
+library(help = "graphics")
+```
+ 
+* Here are a few examples of visualizations functions in the graphics package: 
+plot, lines, points, abline, boxplot, pairs, matplot, barplot, pie, rasterImage, coplot, cdplot, mosaicplot, polygon
+
+## Data Visualization before ggplot2
+plot
+* plot is gereric function for plotting R objects
+* Functions in R can be designed in such a way that the same function can have a completely different behavior depending on the object it is used with
+* Here is a lit with some of the objects it can be applied to 
+```{r}
+methods(plot)
+```
+
+## Default
+* scatterplots
+* structure : plot( x, y, z)
++ x is a variable in the x axis 
++ y in the variable 
++ ... represents other graphical parameters (see ?par for an extensive list)
+```{r}
+?par
+```
+
+## Data visualization before ggplot2
+Eample: the cars dataset
+* lets load the build- in data **cars** which loads as a dataframe, a type of object mention earlier. Then, we can look at it in a couple different ways. 
+* data(cars) loads this dataframse into the **Global Enviroment** as a promise. Promises are unevaluated arguments. 
+```{r}
+data(cars)
+str(cars, 5) # telling the structure 
+```
+```{r}
+head(cars,4) #shows first four rows
+summary(cars) # summary stats for each var (speed and distance)
+```
+## plot options
+```{r}
+plot(x = cars$speed, y = cars$distance,
+     xlab = "Speed (mph)", # x label 
+     ylab = "Stopping Distance (ft)", # y label 
+     main = "Speeds and Stopping distance of cars",
+     type = "p", # type of plot i.e. points 
+     lty = 1, lwd = 1, # lty is the line type, 1 is a solid line, 2 dot, 3 dash
+                       #lwd is line width 
+     pch = 16, #plotting character : i.e. circle, squares, triangles, stars
+     cex = 1, cex.axis = 1, cex.lab = 1, #character expansion is the point size
+               # can highlight specific points(make them bigger)
+               # character expansion for axis : want axis to be bigger
+               # cex. for labels 
+     col = "firebrick") #color
+```
+## Modify 
+Plot type
+* 'p' = points
+* 'l' = lines
+* 'b' = both 
+
+## plot option: cex
+
+```{r}
+# as speed increases size increases 
+obj.size <- seq(0.5,5,length.out = length(cars$speed)) 
+plot(x = cars$speed, y = cars$distance,
+     xlab = "Speed (mph)",  
+     ylab = "Stopping Distance (ft)", 
+     main = "Speeds and Stopping distance of cars",
+     type = "p",
+     lty = 1, lwd = 1,
+     pch = 16, 
+     cex = obj.size, cex.axis = 1, cex.lab = 1, 
+     col = "firebrick") 
+```
+```{r}
+# farther the distance the bigger the plot 
+obj.size <- log(cars$dist)/4
+plot(x = cars$speed, y = cars$distance,
+     xlab = "Speed (mph)",  
+     ylab = "Stopping Distance (ft)", 
+     main = "Speeds and Stopping distance of cars",
+     type = "p",
+     lty = 1, lwd = 1,
+     pch = 16, 
+     cex = obj.size, cex.axis = 1, cex.lab = 1, 
+     col = "firebrick") 
+```
+##plot options : color
+```{r}
+col.vec <- rep(c("firebrick","forestgreen","cornflowerblue"),
+               times=c(sum(cars$speed<10),
+                       sum(cars$speed>=10&cars$speed<17),
+                       sum(cars$speed>=17)))
+plot(x = cars$speed, y = cars$distance,
+     xlab = "Speed (mph)",  
+     ylab = "Stopping Distance (ft)", 
+     main = "Speeds and Stopping distance of cars",
+     type = "p",
+     lty = 1, lwd = 1,
+     pch = 16, 
+     cex = 1, cex.axis = 1, cex.lab = 1, 
+     col = col.vec) 
+```
+## Adding a legend
+```{r}
+plot(x = cars$speed, y = cars$distance,
+     xlab = "Speed (mph)",  
+     ylab = "Stopping Distance (ft)", 
+     main = "Speeds and Stopping distance of cars",
+     type = "p",
+     lty = 1, lwd = 1,
+     pch = 16, 
+     cex = 1, cex.axis = 1, cex.lab = 1, 
+     col = col.vec)
+legend("topleft", #location, topright, bottom, bottomright (look at help)
+                  #can plot as vector as well within 
+       bty = "n", #n mean no box (daniel thinks box looks clunky)
+       pch=c(16,16,16),#point type 
+       col=c("firebrick","forestgreen","cornflowerblue"),
+       legend=c("speed<10","10<=speed<17", "speed>=17"))
+```
+## boxplot
+```{r}
+par(mfrow=c(1,2),mai=c(1,0.5,0.1,0.1)) # parameters
+                      # modify window showing plot
+                      # mai is internal margins 
+                      # mfrow : graphical device of 1 row with two colomns 
+boxplot(decrease ~ treatment, data = OrchardSprays, col = "cornflowerblue",
+        log = "y",cex.axis=0.7,cex.lab=0.7,notch=F)
+## horizontal=TRUE, switching  y <--> x :
+boxplot(decrease ~ treatment, data = OrchardSprays, col = 1:8,
+        log = "x", horizontal=TRUE,cex.axis=0.7,cex.lab=0.7,notch=F)
+```
+### Other plots: `curve`
+
+```{r curvefn, echo=T, fig.height=2.5, fig.width=7.5}
+par(mfrow=c(1,3),mai=c(0.9,0.4,0.1,0.1))
+curve(expr=sin, from=-2*pi, to=2*pi, xname = "t",cex.axis=0.7, cex.lab=0.7)
+curve(expr=tan, xname = "t", from=-2*pi, to=2*pi, cex.axis=0.7, cex.lab=0.7)
+myfn <- function(t){tan(t)*sin(t)}
+curve(expr=myfn, xname = "t", from=-2*pi, to=2*pi, cex.axis=0.7, cex.lab=0.7)
+```
+### Other plots: `hist`
+```{r histfn, echo=T, fig.height=3, fig.width=6}
+par(mfrow=c(1,2),mai=c(1,0.5,0.1,0.1))
+x <- rchisq(1000, df = 4)
+hist(x, freq = FALSE, ylim = c(0, 0.2),col="orange",main="")
+#hist and curve combined
+hist(x, freq = FALSE, ylim = c(0, 0.2),col="orange",main="")
+lines(density(x,from=0, to=20), col = "blue3", lty = 1, lwd = 3)
+
+# density : dont caluclulate values of the tail 
+# ylim : limit of the y axis 
+```
+### Other plots: `pairs`
+
+```{r pairsfn, echo=T, fig.align='center',fig.height=4, fig.width=4}
+par(mai=c(0.1,0.1,0.1,0.1))
+pairs(iris[1:3], cex=0.5, cex.labels = 1,cex.axis=0.7,
+      pch = 21, bg = c("red", "green3", "blue")[unclass(iris$Species)])
+```
+
+```{r}
+#real type of a vector is an integer vector 
+data(iris)
+iris$Species
+unclass(iris$Species)
+```
+### Other plots: `dotchart`
+<div class="columns-2">
+```{r}
+VADeaths
+```
+
+```{r, eval=F, echo=T}
+par(mai=c(0.4,0.1,0.4,0.1))
+dotchart(VADeaths, bg = "skyblue",
+         cex=0.7, cex.axis=0.1,
+         main = "Death Rate VA - 1940")
+```
+<p class="forceBreak"></p>
+
+```{r dotchartfn, eval=T, echo=F, fig.align='center',fig.height=3.5, fig.width=3.5}
+par(mai=c(0.4,0.1,0.4,0.1))
+dotchart(VADeaths, bg = "skyblue",
+         cex=0.7, cex.axis=0.1,
+         main = "Death Rate VA - 1940")
+```
+</div>
+### Other plots: `matplot`
+
+```{r matplotfn, echo=T, fig.height=3, fig.width=6}
+#throw in matrix and give one function per line of matrix 
+par(mfrow=c(1,2),mai=c(0.4,0.4,0.1,0.1))
+#mfrow : enter figures by row (can do mfcol as well)
+#takes two vectors, and combine every combination of first and second vector 
+sines <- outer(1:20, 1:4, function(x, y) sin(x / 20 * pi * y))
+# matrix with 20 rows and four columns
+# fills in from left to right
+matplot(sines, pch = 1:4, type = "o", col = rainbow(ncol(sines)),
+        cex=0.5, cex.axis=0.7)
+        #rainbow puts as many colors as sines in matrix (which is four)
+        #type 'o' : is for overlay , could also have something else here
+matplot(sines, type = "b", pch = 21:23, col = 2:5, bg = 2:5, 
+        cex=0.5, cex.axis=0.7, main = "")
+        #pch is plotting character 
+```
+## rainbow
+```{r}
+rainbow(6)
+```
+
+```{r}
+#sines 
+outer(1:20, 1:4, function(x, y) sin(x / 20 * pi * y))
+```
+
+### Other plots: `barplot`
+
+```{r barplotfn, echo=T, fig.height=3, fig.width=6}
+par(mfrow=c(1,2),mai=c(0.9,0.4,0.1,0.1))
+barplot(GNP ~ Year, data = longley, cex=0.5, cex.axis=0.7, cex.lab=0.7)
+        #formual rep. , give me bar plot by year that shows longly data
+        # before ~ represents y (GNP) and after represents x (YEAR)
+barplot(cbind(Employed, Unemployed) ~ Year, data = longley, cex = 0.5,
+        cex.axis=0.7,cex.lab=0.7)
+        #plotting two different response variables 
+        #(employed and unemployed) by year
+```
+### Other plots: `mosaic`
+
+```{r mosaicfn, echo=T, fig.height=4, fig.width=4}
+#good for category data (only a few)
+par(mfrow=c(1,1),mai=c(0.9,0.4,1,0.4))
+mosaicplot(~ Sex + Age + Survived, data = Titanic, main="",color = TRUE)
+```
+### <span style="color:cornflowerblue">Figures with multiple panels:</span> `mfrow` (or `mfcol`)
+```{r, eval=F,echo=T, fig.height=2.5, fig.width=7.5}
+par(mfrow=c(1,3)) #dim of layout matrix 1 row and 3 columns, fill by row not col
+plot(x = cars$speed, y = cars$dist,xlab = "", ylab = "", main = "",
+     type = "p", pch = 16, col = "firebrick") 
+plot(x = cars$speed, y = cars$dist,xlab = "", ylab = "", main = "",
+     type = "p", pch = 16, col = "firebrick") 
+abline(reg=lm(dist~speed,data=cars),col="forestgreen")
+      # overlaying regression line of slope ontop of previous plot 
+plot(x = cars$speed, y = cars$dist,xlab = "", ylab = "", main = "",
+     type = "p", pch = 16, col = "firebrick") 
+lines(lowess(cars),col="cornflowerblue")
+```
+### <span style="color:cornflowerblue">Figures with multiple panels:</span> `mfrow` (or `mfcol`)
+```{r, eval=T,echo=F, fig.height=2.8, fig.width=8.4}
+par(mfrow=c(1,3))
+plot(x = cars$speed, y = cars$dist,xlab = "", ylab = "", main = "",
+     type = "p", pch = 16, col = "firebrick") 
+plot(x = cars$speed, y = cars$dist,xlab = "", ylab = "", main = "",
+     type = "p", pch = 16, col = "firebrick") 
+abline(reg=lm(dist~speed,data=cars),col="forestgreen",lwd=2)
+plot(x = cars$speed, y = cars$dist,xlab = "", ylab = "", main = "",
+     type = "p", pch = 16, col = "firebrick") 
+lines(lowess(cars),col="cornflowerblue",lwd=2)
+```
+### <span style="color:cornflowerblue">Figures with multiple panels:</span> the `layout` function
+
+```{r, eval=FALSE}
+layout(mat, 
+       widths = rep.int(1, ncol(mat)),
+       heights = rep.int(1, nrow(mat)), 
+       respect = FALSE)
+```
+### <span style="color:cornflowerblue">Figures with multiple panels:</span> the `layout` function
+
+```{r, echo=T,eval=T,fig.height=4,fig.width=4}
+nf <- layout(matrix(c(2,0,1,3),2,2,byrow = TRUE), widths=c(3,1), heights=c(1,3), TRUE)
+            # matrix is saying put two upper left, nothing in upper right
+            # 1 in lower left, and three in lower right 
+            #widths / heights : for object 
+layout.show(nf)
+```
+### <span style="color:cornflowerblue">Figures with multiple panels:</span> the `layout` function
+
+```{r, echo=T,eval=F, fig.height=4.5,fig.width=4.5}
+nf <- layout(matrix(c(2,0,1,3),ncol=2,nrow=2,byrow = TRUE), 
+             widths=c(3,1), heights=c(1,3), 
+             respect=TRUE)
+
+#sample values from two normal distributions
+x <- pmin(3, pmax(-3, stats::rnorm(50))) # 50 standard normal and then put 
+y <- pmin(3, pmax(-3, stats::rnorm(50))) # b/t -3 and 3 for plotting looks good
+
+#generate and store histograms for x and y
+xhist <- hist(x, breaks = seq(-3,3,0.5), plot = FALSE) #storing value of hist
+yhist <- hist(y, breaks = seq(-3,3,0.5), plot = FALSE)
+top <- max(c(xhist$counts, yhist$counts)) #used to defin. upper limit for hists
+
+xrange <- yrange <- c(-3, 3)
+    # initializing ranges to use later
+par(mar = c(3,3,1,1)) #mar : margins (unsure of order)
+plot(x, y, xlim = xrange, ylim = yrange, xlab = "", ylab = "")
+    #scatter plot in the middle 
+par(mar = c(0,3,1,1))
+barplot(xhist$counts, axes = FALSE, ylim = c(0, top), space = 0)
+    # azes = FALSE : dont plot the axis 
+    # ylim : 0 to top
+    #space = 0 : no spaces b/t bars
+par(mar = c(3,0,1,1))
+barplot(yhist$counts, axes = FALSE, xlim = c(0, top), space = 0, horiz = TRUE)
+```
+
+## what xhist is storing 
+```{r}
+x <- pmin(3, pmax(-3, stats::rnorm(50))) # 50 standard normal and then put 
+y <- pmin(3, pmax(-3, stats::rnorm(50)))
+xhist <- hist(x, breaks = seq(-3,3,0.5), plot = FALSE)
+xhist
+```
+

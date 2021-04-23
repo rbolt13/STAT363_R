@@ -1,0 +1,152 @@
+---
+title: "Week 3 Notes : Part 2"
+author: "Randi Bolt"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Data Frame Subsetting: 
+If provided with a single value, data frames assume you want to subset a column or columns - multiple values then the data frame is treated as a matrix. 
+
+```{r}
+df <- data.frame(a= 1:2, b = 3:4)
+df[1]
+df[[1]]
+df[,"a"]
+df[2]
+df["a"]
+df[1,]
+typeof(df[1,]) # list 
+typeof(df[,1]) # int
+#behave more like a matrix : otherwise it will simplify to vector or single value 
+df[ ,"a", drop=FALSE]
+df[c("a","b","a","a","a")]
+```
+# Preserving vs Simplifying Subsets
+```{r}
+# atomic vector 
+x[[1]] #simplifying (only pulling a single value, losing name)
+x[1] #preserving, and can pull more than one thing
+#List
+x[[1]] #simplifying
+x[1] #preserving
+#Matrix / Array
+x[1,] #simplifying
+x[,1]#preserving
+
+```
+
+# In class example
+```{r}
+x <- matrix(1:15, nrow=5)
+x
+x[1:3,]
+
+x[1, drop=FALSE]
+```
+
+# Subsetting and assignment 
+```{r}
+x <- c(1,4,7)
+x[2]<- 2
+x
+x[x %% 2 !0] = x[x %% 2 != 0] +1
+x[c(1,1)] = c(2,3)
+```
+
+# Class Example
+```{r}
+x <- c(1,4,7)
+```
+# Subsetting and assignment Cont. 
+```{r}
+x <- 1:6
+x[c(2,NA)] <- 1
+x
+```
+Resetting vector, and then subset vector removing position 1 and 3 and assigning to that subsector 3 
+```{r}
+x <- 1:6
+#minus is compliment, give me not one and four
+x[c(-1,-4)]<-3
+x
+```
+Recycling position one is true and then position 2 is NA for 6 positions. 
+```{r}
+x <- 1:6
+x[c(TRUE,NA)] <- 1 
+```
+Repopulating the entries 6 to 1 instead of 1 to 6 
+```{r}
+x <- 1:6
+x[] <- 6:1
+x
+```
+
+# Deleting list (df) elements
+```{r}
+#b recycles value true and fills vector 
+df <- data.frame(a=1:2, b=TRUE, c=c("A","B"))
+df
+#[[]] modifying object internally 
+df[["b"]] <- NULL
+df
+df[,"c"] <- NULL
+df
+```
+# Subsets and Subsets
+```{r}
+df <- data.frame(a = c(5,1,NA,3))
+#finding values = to five and replace with zero
+df$a[df$a == 5] <- 0
+df
+```
+
+another way to do this
+```{r}
+df[1][df[1] == 3]<- 0
+df
+```
+# Permutation test for two group means
+In an experiment on memory students were given lists of 24 words to memorize. After hearing the words they were assigned at random to different groups:
+* One group of 12 students took a nap for 1.5 hours while 
+* A second group of 12 students stayed awake and was given a caffeine pill. 
+These data contain the number of words each perticipant was able to recall after the break. 
+```{r}
+Memory <- read.csv("http://www.mosaic-web.org/go/datasets/SleepCaffeine.csv")
+summary(Memory)
+```
+
+```{r}
+get_streak <- function(x){
+  y <- rep(0,length(x))
+  y[x == "H"] <- 1
+  y <- c(0, y, 0)
+  wz <- which(y == 0)
+  streak <- diff(wz) - 1
+  return(streak)}
+
+kobe_streak <- get_streak(kobe$basket)
+kobe_streak
+barplot(table(kobe_streak))
+```
+
+## Another percentage lol 
+```{r}
+hits <- 0
+for (x in 1:length(kobe$basket)){
+    if(kobe$basket[x]=="H"){
+        hits <- hits +1 
+        next
+    }
+}
+hit_percent = (hits / length(kobe$basket))*100
+hit_percent
+```
+

@@ -181,3 +181,18 @@ for(a in primes){
 res
 ```
 
+## bloop 
+```{r}
+# kobe$basket
+get_streak <- function(x){
+  y <- 0
+  if(x == "H"){
+    y <- y+1
+  }
+}
+    
+
+kobe_streak <- get_streak(kobe$basket)
+
+```
+

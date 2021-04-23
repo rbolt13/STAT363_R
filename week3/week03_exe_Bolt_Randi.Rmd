@@ -1,0 +1,137 @@
+---
+title: "In-class Exercise Week 3"
+author: "Randi Bolt"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Tuesday Lecture: Permutation test for two group means
+
+## Sleep vs Caffeine experiment
+
+In an experiment on memory (Mednicj et al, 2008), students were given lists of 24 words to memorize. After hearing the words they were assigned at random to different groups. One group of 12 students took a nap for 1.5 hours while a second group of 12 students stayed awake and was given a caffeine pill. 
+
+These data contain the number of words each participant was able to recall after the break:
+```{r}
+Memory <- read.csv("http://www.mosaic-web.org/go/datasets/SleepCaffeine.csv")
+```
+
+
+You want to test whether the data indicate a difference in mean number of words recalled between the two treatments.  Let's use a *permutation test* to do so.
+
+## Interlude: Permutation Tests
+
+In testing a null hypothesis we need a test statistic that will have different values under the *null hypothesis* (the means of the two groups are the same) and the *alternative hypothesis* we care about (i.e., the means are different).
+
+To test the hypothesis, we need to know the sampling distribution of the test statistic when the null hypothesis is true. For some test statistics and some null hypotheses this is not possible. The p-value tells us how likely it is (under the null hypothesis) for the test statistic to be at least as extreme as the one we observed, if the null hypothesis is true.
+
+Because of this, if the null hypothesis is true, then shuffled data sets should look like the real data, otherwise they should look different from the real data. A permutation test gives a simple way to compute the sampling distribution for any test statistic, under the null hypothesis that the treatment has absolutely no effect on the outcome, and the ranking of the real test statistic among the shuffled test statistics allows us to obtain a p-value.
+
+From the theory, we know that the distribution of a difference in the means and we could just do a t-test.  For the t-test to be valid we need enough samples so the Central Limit Theorem kicks in. In our case, a t-test might not work since we have only a few subjects. More information on permutation tests [here](http://faculty.washington.edu/kenrice/sisg/SISG-08-06.pdf).
+
+
+## Questions
+
+
+1. Calculate the observed difference (Caffeine-Sleep) between the group means
+```{r}
+# code here
+sleep.mean <- mean(Memory$Words[Memory$Group=="Sleep"])
+caffeine.mean <- mean(Memory$Words[Memory$Group=="Caffeine"]) 
+obs.diff <- caffeine.mean - sleep.mean
+obs.diff
+  #not the last line
+```
+
+
+2. Create a function (call it `perm_diff`) to randomly permute the 12 *Sleep* and 12 *Caffeine* treatment labels and calculate the means for each group under this label assignment
+
+```{r}
+# code here
+perm_diff <- function(){
+  perm.group <- sample(Memory$Group)
+  perm.sleep.mean <- mean(Memory$Words[perm.group == "Sleep"])
+  perm.caffeine.mean <- mean(Memory$Words[perm.group == "Caffeine"])
+  perm.sleep.mean - perm.caffeine.mean
+}
+```
+
+
+3. Use `perm_diff` to generate 10000 permutations and store the difference between the means in a vector called `diff_vector`.
+```{r}
+# code here
+diff_vector <- rep(NA, 10000)
+for(x in 1:10000){
+  diff_vector[x] <- perm_diff()
+}
+```
+
+
+
+4. Use the function `quantile` with the vector `diff_vector` to see a quick summary of the permuted differences
+```{r}
+# code here
+quantile(diff_vector)
+```
+
+
+5. Plot the *sampling distribution* of the differences using the function `hist`
+```{r}
+# code here
+hist(diff_vector)
+```
+
+6. Use the function `abline` to see where the observed difference falls in the sampling distribution you plotted above (by default `abline` is added to your last plot)
+
+```{r}
+# code here
+hist(diff_vector)
+abline(v=obs.diff,
+       col="coral",
+       lwd=3)
+```
+
+7. Calculate the proportion of times that the observed differences are smaller (try greater) than the ones simulated
+```{r}
+# avg. value of 0 and 1's... area below line 
+mean(diff_vector<obs.diff)
+```
+
+8. State you conclusions, is there a difference between the two treatments?
+
+Yes, less than two percent of the distribution falls below the observed value. 
+
+# Thursday Lecture: 
+
+Your task is to play with the `swiss` data set built into R for 20 mins
+
+- Use `?swiss` to see what things mean in the dataset
+
+- Load the data using `data(swiss)`
+```{r}
+# code here
+?swiss
+```
+
+
+- Think of and write down in your Rmd document one or two questions you'd like to explore with these data
+
+Possible questions 
+1. Is the relationship between education and fertily negative? 
+2. Is this relationship mediated by religious inclination (a interaction effect)?
+
+```{r}
+# code here
+
+```
+
+
+
+- Use the function `plot` to explore your questions and make 2 or 3 nicely formatted plots with with the options we discussed so far (include legends, play with `col`, `cex`, `type`)
+

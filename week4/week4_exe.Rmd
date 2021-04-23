@@ -1,0 +1,92 @@
+---
+title: "In-class Exercise Week 4"
+author: "Randi Bolt"
+date: "4/20/2021"
+output:
+   html_document:
+    theme: readable
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(gapminder)
+library(ggplot2)
+library(ggthemes)
+```
+
+# Tuesday Lecture
+
+Your task is to play with the `swiss` data set built into R for 20 mins
+
+- Use `?swiss` to see what things mean in the dataset
+
+- Load the data using `data(swiss)`
+```{r}
+data(swiss)
+```
+
+
+- Think of and write down in your Rmd document one or two questions you'd like to explore with these data.  For example, some possible questions are:
+
+  1. Is the relationship between education and fertily negative? 
+ 
+  2. Is this relationship mediated by religious inclination (a interaction effect)?
+
+```{r}
+plot(x = swiss$Fertility, y = swiss$Education,
+     xlab = "Fertility",  
+     ylab = "Education", 
+     main = "Fertility Vs. Education",
+     type = "p",
+     lty = 1, lwd = 1,
+     pch = 16, 
+     cex = 1, cex.axis = 1, cex.lab = 1, 
+     col = "firebrick")
+
+plot(x = swiss$Catholic, y = (1-swiss$Catholic),
+     xlab = "Catholic",  
+     ylab = "Non Catholic", 
+     main = "Catholic Vs. Non.Catholic",
+     type = "p",
+     lty = 1, lwd = 1,
+     pch = 16, 
+     cex = 1, cex.axis = 1, cex.lab = 1, 
+     col = "firebrick")
+```
+
+
+- Use the function `plot` to explore your questions and make 2 or 3 nicely formatted plots with with the options we discussed so far (include legends, play with `col`, `cex`, `type`)
+
+
+# Thursday Lecture: playing with the gapminder data
+
+## Problem 1
+
+Explore other relationships in the `gapminder` data using what you learned today, could be considering other variables in the data set, or using an alternative geometry or faceting with other variables. Just make one figure, but using effectively as many of the concepts you learned as possible.
+
+[This data visualization cheat sheet might be helpful](https://www.rstudio.com/wp-content/uploads/2016/11/ggplot2-cheatsheet-2.1.pdf)
+
+Here is the data
+```{r}
+data(gapminder)
+```
+
+
+
+```{r message=F, echo=F, fig.align='center'}
+# your plotting code here
+
+```
+
+
+## Problem 2
+
+```{r message=F}
+movies = readr::read_csv("movies.csv") 
+```
+
+
+```{r echo=FALSE, fig.align='center', fig.height=7,fig.width=10}
+
+
+```

@@ -1,0 +1,374 @@
+---
+title: "Week3_CodeeMagee"
+subtitle : "Week 3 Notes : More Subsetting and Intro to Data Vis"
+author: "Randi Bolt"
+date: "4/13/2021"
+output: 
+  html_document:
+  theme: readable 
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Subsetting in General
+
+* R has different subsetting operators([, [[, and $). The behavior of these operators will depend on the object they are being used with. 
+
+In general there are 6 different data types
+* pos. int., neg. int. , logical values, epmty/ NULL, Zero, character values " names" 
+
+### Positive Integer subsetting
+```{r}
+x <- c(1,4,7)
+x[c(1,3)]
+x[c(1,1)]
+x[c(1.9,2.1)]
+y <- list(1,4,7)
+str(y[c(1,3)])
+str(y[c(1,1)])
+str(y[c(1.9,2.1)])
+```
+### Negative Integer subsetting
+```{r}
+x <- c(1,4,7)
+x[-1]
+x[-c(1,1)]
+x[c(-1,-1)]
+y <- list(1,4,7)
+str(y[-1])
+str(y[-c(1,3)])
+# Error: x[c(-1,2)]
+```
+
+### Logical Value subsetting
+```{r}
+x <- c(1, 4, 7, 12)
+x[c(TRUE,TRUE,FALSE,TRUE)]
+x[c(TRUE,FALSE)]
+#test if even, and print even values
+x[x %% 2 == 0]
+y <- list(1,4,7,12)
+str(y[c(TRUE, TRUE, FALSE, TRUE)])
+str( y[c(TRUE,FALSE)])
+# Error : mod doesn't work with list 
+# str( y[y %% 2 == 0])
+```
+ ## In class example for cahracter strings
+ 
+```{r}
+x <- c("a", "b", "c")
+x[x=="a"]
+x[x>"a"]
+```
+ ### Empty subsetting 
+```{r}
+x <- c(1,4,7)
+x[]
+# Put one in every entry of vector 
+x[] <- 1
+x
+y <- list(1,4,7)
+str(y[])
+```
+ 
+### Zero Subsetting
+```{r}
+x <- c(1,4,7)
+x[c(0,1)]
+y <- list(1,4,7)
+y[c(0,2)]
+```
+
+### Character subsetting
+```{r}
+x <- c(a=1, b=2,c=7)
+x["a"]
+x[c("b","c")]
+y <- list(a=1,b=4,c=7)
+str(y[c("a","a")])
+str(y[c("b","c")])
+```
+
+### Out of bound subsetting
+```{r}
+x <- c(1,4,7)
+x["a"]
+x[c(1,4)]
+y <- list(1,4,7)
+str(y[4])
+str(y["a"])
+str(y[c(1,4)])
+```
+
+### Missing and NULL subsetting
+```{r}
+x[NA]
+x[NULL]
+x[c(1,NA)]
+str(y[NA])
+str(y[NULL])
+str(y[c(1,NA)])
+```
+
+### [ vs. [[ with Atomic Vectors
+```{r}
+x <- c(a=1, b=4, c=7)
+#enter position in form 
+x[[1]]
+#value and its name , keep structure 
+x[1]
+#only access value
+x[["a"]]
+# error : [[ only points to one particular element
+# x[[1:2]]
+```
+
+### [ vs. [[ with Generic Vectors
+```{r}
+y[2]
+y[[2]]
+y[["b"]]
+# Error : out of bounds 
+# y[[1:2]]
+y <- list(a=1, b=c(4,6,5),c=7)
+y[2]
+y[[2]]
+y[[2:3]]
+y[c(2:3)]
+y$a
+```
+
+## Functions
+
+### When to use functions
+
+The goal of a function should be to encapsulate a small reusable piece of code.
+###### Some tips
+* Name should make it clear what the function does
+* Functionality should be simple enough to be quickly understood. 
+* The smaller and more modular the code the easier it will be to reuse elsewhere. 
+* Better to change code in one location than code everywhere
+
+### Function Parts 
+The two parts of a function are the arguments (formals) and the code (body)
+```{r}
+gcd <- function(long1, lat1, long2, lat2){
+  R <- 6371 # Earth mean radius in km
+  #distance in km
+  acos(sin(lat1)*sin(lat2)+cos(lat1*cos(lat2)*cos(long2-long1)))
+}
+formals(gcd)
+body(gcd)
+```
+
+### Return values
+There are two ways of returning values in R: explicit or implicit return values
+```{r}
+# explicit - includes one or more return statements
+f<- function(x){
+  return(x*x)
+}
+f(4)
+# implicit - value of the last statment is returned 
+f <- function(x){
+  y <- x*x
+}
+# wont be able to access 
+f(4)
+```
+
+### Returning multiple values
+If we want a function to return more than one value we can group things using either a vector or a list
+```{r}
+f <- function(x){
+  c(x, x^2,x^3)
+}
+f(2)
+f(2:3) # assumes whole thing is vector 
+```
+### In class examples 
+```{r}
+f <- function(x){
+  res1 <- rep(NA,length(x)*3)
+  for(i in seq_along(x)){
+    res1[((i-1)*3+1):(3*i)]<-c(x[i], x[i]^2, x[i]^3)
+  }
+  res1
+}
+f(2:3)
+```
+
+### Argument names
+When defining a function we implicitly define names for arguments. We can use these names to pass arguments in a different order. 
+* be careful if you don't specify names, and forget the order it runs through the function 
+```{r}
+f <- function(x,y,z){
+  paste0("x=",x,"y=",y,"z=",z)
+}
+f(1,2,3)
+f(z=1,x=2,y=3)
+f(y=2,1,3)
+f(y=2,1,x=3)
+# error : unused m
+# f(1,2,3, m=1)
+```
+
+### Argument defaults
+```{r}
+f <- function(x, y=1, z=1){
+  paste0("x=",x,"y=",y,"z=",z)
+}
+# error
+# f()
+f(x=3)
+f(y=2,2)
+```
+
+### Scope
+R has generous scoping rules, if a variable isn't in the function's body, R will look for it in the next higher scope, and so on
+```{r}
+# f is only a function of f because y has previously been defined 
+y <- 1
+f <- function(x){
+  x+y
+}
+f(3)
+# y variable inside function takes precedent 
+g <- function(x){
+  y<-2
+  x+y
+}
+g(3)
+```
+Variables defined within a scope only persist for the duration of that scope, they do not overwrite variables at higher scopes (unless you use the global assignment operator <<-, which you shouldn't)
+```{r}
+x <- 1
+y <- 1
+z <- 1
+f <- function(){
+  y <- 2
+  g <- function(){
+    z <- 3
+    return(x + y + z) # applies functions
+  }
+  return(g()) #returns function 
+}
+f()
+c(x,y,z)
+```
+#### Modified Example
+```{r}
+x <- 1
+y <- 1
+z <- 1
+f <- function(){
+  y <- 2
+  g <- function(){
+    z <- 3
+    x + y + z # do not need return function 
+  }
+  g() #returns function 
+}
+f()
+c(x,y,z)
+```
+
+# Break 
+
+## Lazy Evaluation 
+Arguments to R functions are lazily evaluated - meaning they are not evaluated until theyare used
+```{r, error=TRUE}
+f <- function(x){
+  cat("Hello world!\n")
+  x
+}
+# Error
+f(stop())
+```
+### Getting Help 
+Prefixing any function name with a ? will open the related help for that function 
+```{r}
+?'+'
+?sum
+summary.aov
+```
+
+### Less Helpful Examples
+```{r}
+list
+'['
+sum
+'+'
+```
+
+### About Homework
+* Your documents shold be pleasant for a peer to look at, with some organization using sections or lists, and all plots labeled clearly
+* Use chunk options echo and results to limit the code/output you should in the .html file
+* Discussion of specific values should be summarized in sentences in your text (use inline code) - not as printed code and output - and rounded so ans not to be absurdly precise (e.g. use round x with round(x,2)). 
+* Use naming format specified 
+
+### Peer Review: Grading Rubric 
+
+Once the submission deadline has passed I will randomly assign graders to annonymized assignments and give you access to the files 
+
+0 - No homework turned anything in.
+1 - Turned in but low effor, poorly presented with nonfunctional code and ignoring directions.
+2 - Decent effort, well presented all code works and followed directions with some minor issues.
+3 - Nailed it! 
+
+*Peer review will be next week 
+
+### Acknowledgements
+* Colin Rundel
+* Jenny Bryan
+* Daniel Taylor-Rodriguez
+* Advanced R book
+* Programming Exercises for R 
+
+*note : example of this hw is in the r book, but do not copy 
+
+# Week 3 : More Subsetting and Intro to Data Vis
+## Subsetting
+### Subsetting Matrices
+```{r}
+# not a type preserving operations 
+(x<- matrix(1:6, nrow=2, ncol=3))
+x[1,3]
+x[1:3]
+x[1:2,1:2]
+x[,1:2]
+# will convert vector into a single row, so be carful doing functions with matrices 
+x[-1,-3]
+```
+
+### Preserving Subsetting 
+Most of the time, R's [ subset operator is a preserving operator, in that the returned object will have the same type as the parent. Confusingly, when used with a matrix or array [ becomes a simplifying operator (does not preserve type) - this behavior is controlled by the drop argument. 
+```{r}
+x[1,]
+# This is something you will use in practice 
+x[1, , drop=TRUE]
+x[1, , drop=FALSE]
+str(x[1, ])
+str(x[1, , drop=TRUE])
+str(x[1, , drop=FALSE])
+```
+### In Class example
+```{r}
+x <- matrix(1:6, nrow=2, ncol=3)
+colnames(x)<- paste("c",1:3,sep="")
+rownames(x)<- paste("r",1:2,sep="")
+x
+```
+
+### Factor Subsetting
+```{r}
+(x<- factor(c("BS","MS","PhD","MS")))
+x[1:2]
+# drops levels that aren't inside of new vector 
+x[1:2, drop=TRUE]
+```
+
+## Next Time
+Data Frame Subsetting 
